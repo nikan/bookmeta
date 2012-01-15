@@ -107,6 +107,7 @@ if($checkisbn->valid_isbn10() === TRUE || $checkisbn->valid_isbn13() === TRUE){
 	}
 	
 	if($format === 'json'){
+		header('Content-type: application/json');
 		$html = <<<JSON_RESPONSE
 		{"biblionetid" : "$biblionetid",
 		"cover_url" : "$cover_url",
@@ -156,17 +157,15 @@ function my_callback($element) {
 	global $html;
 	global $head;
 	global $isbn;
- 
-	$head = <<<HEAD
-  <title>Metadata for isnbn  $isbn </title>
-HEAD;
+ 	global $format;
+ 	if($format === 'html'){
+		$head = "<title>Metadata for isnbn  $isbn </title>";	
+		// Replace Head 	
+		if ($element->tag=='head'){
+		          $element->innertext = $head;            
+		} 	
+ 	}
 
-
-
-	// Replace Head 	
-	if ($element->tag=='head'){
-	          $element->innertext = $head;            
-	}
 	//Remove scripts
 	else if ($element->tag=='script'){
 		$element->outertext = '';	
