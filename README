@@ -1,0 +1,2 @@
+A small script that extracts book metadata from the most comprehensive modern Greek book database: biblionet.gr.
+Metadata are returned as a json object.
