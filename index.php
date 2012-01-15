@@ -15,6 +15,11 @@ require_once('isbn.test.php');
 require_once('simple_html_dom.php');
 
 $isbn = $_GET['isbn'];
+$format = $_GET['format'];
+
+if(empty($format)){
+	$format = 'json';
+} 
 
 $checkisbn = new ISBNtest;
 $checkisbn->set_isbn($isbn);
@@ -101,19 +106,43 @@ if($checkisbn->valid_isbn10() === TRUE || $checkisbn->valid_isbn13() === TRUE){
 
 	}
 	
-	$html = <<<JSON_RESPONSE
-	{"biblionetid" : "$biblionetid",
-	"cover_url" : "$cover_url",
-	"title" : "$title[0]",
-	"subtitle" : "$subtitle",
-	"authors" : "$persons[0]", 
-	"translators" : "$persons[1]",
-	"publisher" : "$publisher[0]",
-	"yr_published" : "$yr_published",
-	"original_language" : "$original_language[1]",
-	"original_title" : "$original_title[1]",
-	"categories" : "$categories"}
+	if($format === 'json'){
+		$html = <<<JSON_RESPONSE
+		{"biblionetid" : "$biblionetid",
+		"cover_url" : "$cover_url",
+		"title" : "$title[0]",
+		"subtitle" : "$subtitle",
+		"authors" : "$persons[0]", 
+		"translators" : "$persons[1]",
+		"publisher" : "$publisher[0]",
+		"yr_published" : "$yr_published",
+		"original_language" : "$original_language[1]",
+		"original_title" : "$original_title[1]",
+		"categories" : "$categories"}
 JSON_RESPONSE;
+	} else {
+			$html = <<<HTML_RESPONSE
+		<html>
+		<head>
+		<title>Metadata for book with isbn: $isbn</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		</head>
+		<body>
+		<p id="biblionetid">$biblionetid</p>
+		<p id="cover_url">$cover_url</p>
+		<p id="title">$title[0]</p>
+		<p id="subtitle">$subtitle</p>
+		<p id="authors">$persons[0]</p> 
+		<p id="translators">$persons[1]</p>
+		<p id="publisher">$publisher[0]</p>
+		<p id="yr_published">$yr_published</p>
+		<p id="original_language">$original_language[1]</p>
+		<p id="original_title">$original_title[1]</p>
+		<p id="categories">$categories</p>
+		</body>
+		</html>
+HTML_RESPONSE;
+	}
 
 	echo $html;
 } else {
@@ -132,6 +161,7 @@ function my_callback($element) {
   <title>Metadata for isnbn  $isbn </title>
   <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
 HEAD;
+
 
 
 	// Replace Head 	
