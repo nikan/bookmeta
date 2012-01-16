@@ -1,6 +1,6 @@
 <?php 
 /**
-*	 Version: 0.1
+*	 Version: 0.1.1
 *  Author: Nikos Anagnostou (http://github.com/nikan)
 *	 Acknowledge: S.C. Chen (http://sourceforge.net/projects/simplehtmldom/),
 *								Keith Nunn (http://www.phpkode.com/scripts/item/isbn-check/)
@@ -48,8 +48,6 @@ if($checkisbn->valid_isbn10() === TRUE || $checkisbn->valid_isbn13() === TRUE){
 	$table[0]->outertext = "";
 	
 	//Preparing data for json output
-	$cover_url = $html->find('img');
-	$cover_url = "http://biblionet.gr/". $cover_url[0]->src;
 	$title = '';
 	$subtitle = '';
 	$authors= '';
@@ -79,6 +77,8 @@ if($checkisbn->valid_isbn10() === TRUE || $checkisbn->valid_isbn13() === TRUE){
 			$publisher[] = $_a->innertext;
 		} 
 	}
+$cover_url = "http://biblionet.gr/images/covers/" . $biblionetid . ".jpg";
+	
 	$other = $html->find('span[class=small]');
 	$td = $other[0]->parent();
 	$other = explode('<br>', $other[0]->innertext);
@@ -102,7 +102,7 @@ if($checkisbn->valid_isbn10() === TRUE || $checkisbn->valid_isbn13() === TRUE){
 	} else if($result === 0){
 		$yr_published = "No publishing year found";		
 	} else {
-		$yr_published = substr($matches[0], 1, 5);
+		$yr_published = substr($matches[0], 1, 4);
 
 	}
 	
@@ -112,7 +112,6 @@ if($checkisbn->valid_isbn10() === TRUE || $checkisbn->valid_isbn13() === TRUE){
 		{"biblionetid" : "$biblionetid",
 		"cover_url" : "$cover_url",
 		"title" : "$title[0]",
-		"subtitle" : "$subtitle",
 		"authors" : "$persons[0]", 
 		"translators" : "$persons[1]",
 		"publisher" : "$publisher[0]",
@@ -132,7 +131,6 @@ JSON_RESPONSE;
 		<p id="biblionetid">$biblionetid</p>
 		<p id="cover_url">$cover_url</p>
 		<p id="title">$title[0]</p>
-		<p id="subtitle">$subtitle</p>
 		<p id="authors">$persons[0]</p> 
 		<p id="translators">$persons[1]</p>
 		<p id="publisher">$publisher[0]</p>
@@ -175,10 +173,6 @@ function my_callback($element) {
 		$element->outertext = '';	
 	}	else if ($element->tag=='title'){
 		$element->outertext = '';	
-	}	else if ($element->tag=='img'){
-		$element->src = "http://biblionet.gr". $element->src;	
-	}	else if($element->tag=='img'){
-		$element->style = '';
 	} else if($element->tag=='body'){
 		$element->style = '';
 	}
