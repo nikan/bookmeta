@@ -77,7 +77,10 @@ if($checkisbn->valid_isbn10() === TRUE || $checkisbn->valid_isbn13() === TRUE){
 			$publisher[] = $_a->innertext;
 		} 
 	}
-$cover_url = "http://biblionet.gr/images/covers/" . $biblionetid . ".jpg";
+	$covers = $html->find('img[src*=s'.$biblionetid .']');
+	if(count($covers) >= 1){
+		$cover_url = "http://biblionet.gr/images/covers/b" . $biblionetid . ".jpg";
+	} 
 	
 	$other = $html->find('span[class=small]');
 	$td = $other[0]->parent();
