@@ -29,7 +29,15 @@ if($checkisbn->valid_isbn10() === TRUE || $checkisbn->valid_isbn13() === TRUE){
 	$page = "http://biblionet.gr/main.asp?page=results&isbn=" . $isbn;
 	
 	// Get that website's content
-	$html = file_get_html($page);
+	if(ini_get('allow_url_fopen') == '1'){
+		$html = file_get_html($page);
+	} else if(function_exists('curl_init')){
+	
+		$html = str_get_html(get_data($page));
+	} else {
+		echo "Cannot load data. No available methods are available on this server";
+	}
+	
 	$html->set_callback('my_callback');
 	
 	//Remove tables except the one with the book data
@@ -180,4 +188,16 @@ function my_callback($element) {
 		$element->style = '';
 	}
 } 
+
+		function get_data($url)
+{
+  $ch = curl_init();
+  $timeout = 5;
+  curl_setopt($ch,CURLOPT_URL,$url);
+  curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
+  curl_setopt($ch,CURLOPT_CONNECTTIMEOUT,$timeout);
+  $data = curl_exec($ch);
+  curl_close($ch);
+  return $data;
+}
 ?>
