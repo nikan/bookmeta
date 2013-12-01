@@ -1,6 +1,6 @@
 <?php 
 /**
-*	 Version: 0.1.2
+*	 Version: 0.1.
 *  Author: Nikos Anagnostou (http://github.com/nikan)
 *	 Acknowledge: S.C. Chen (http://sourceforge.net/projects/simplehtmldom/),
 *								Keith Nunn (http://www.phpkode.com/scripts/item/isbn-check/)
@@ -59,37 +59,23 @@ if($checkisbn->valid_isbn10() === TRUE || $checkisbn->valid_isbn13() === TRUE){
 	//Get all a links
 	//first category links
 	$a = $html->find('a[class=subjectlink]');
-	$categories = $a[0]->innertext;
+	$categories = $a[]->innertext;
 	//then booklinks
 	$a = $html->find('a[class=booklink]');	
-	$book_matches = array();
-	$person_matches = array();
-	$company_matches = array();
-	foreach($a as $_a){
-		
-		if(preg_match('/book\/.*?\//', $_a->href, $book_matches ) > 0){
-		  $biblionetid  = $book_matches[0];
-		  $biblionetid = substr($biblionetid, 5, count($biblionetid)-2);
-      $title[] = $_a->innertext;
-		}
-		
-		if(preg_match('/author\/.*?\//', $_a->href, $person_matches) > 0){
-/*
-		  FUTURE USE: this is to retrieve the ids and query the names. It is more reliable
-		  $persons = $person_matches;
-		  $persons[0] = substr($persons[0], 7, count($persons[0])-2); 
-*/
-			$persons[] = $_a->innertext;
-		}
 
-		if(preg_match('/com\/.*?\//', $_a->href, $company_matches) > 0){
-/*
-       FUTURE USE: this is to retrieve the ids and query the names. It is more reliable
-  		$com = $company_matches;
-			$publisher[0] = substr($com[0], 4, count($com[0])-2);
-*/
-		  $publisher[] = $_a->innertext;
-		}
+	foreach($a as $_a){
+		$idpos = strpos($_a->href, 'book');
+		$personpos = strpos($_a->href, 'author');
+		$compos = strpos($_a->href, 'com');
+		$href_frag = explode( "/", $_a->href);
+		if($idpos){ //if it is a number, there is a string, else it is false
+			$biblionetid = $href_frag[2];
+			$title[] = $_a->innertext;
+		} else if($personpos){
+			$persons[] = $_a->innertext;
+		} else if($compos){
+			$publisher[] = $_a->innertext;
+		} 
 	}
 	
 	
