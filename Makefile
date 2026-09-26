@@ -18,8 +18,8 @@ help:
 	@echo "make live-test     tests against the real biblionet.gr (network)"
 	@echo "make fixtures      re-download contract/fixtures and rewrite expected JSON with PHP (network)"
 	@echo "make serve-php     PHP endpoint at http://localhost:$(PORT)/index.php?isbn=9789600316483"
-	@echo "make serve-py      Python endpoint at http://localhost:$(PORT)/index.php?isbn=9789600316483"
-	@echo "make serve-ts      TypeScript endpoint at http://localhost:$(PORT)/index.php?isbn=9789600316483"
+	@echo "make serve-py      Python endpoint at http://localhost:$(PORT)/?isbn=9789600316483"
+	@echo "make serve-ts      TypeScript endpoint at http://localhost:$(PORT)/?isbn=9789600316483"
 
 test: test-php test-py test-ts
 lint: lint-php lint-py lint-ts

@@ -15,7 +15,7 @@ Run everything from the repo root with `make`. PHP is **not** installed on the h
 | `make lint` | `php -l`; ruff, `ruff format --check` and `mypy --strict`; eslint (strict type-checked), prettier and `tsc --noEmit` |
 | `make live-test` | Hits the real biblionet.gr. Run only when checking whether the site changed. |
 | `make fixtures` | Re-downloads `contract/fixtures` and rewrites `*.expected.json` using PHP. Review the diff. |
-| `make serve-php` / `serve-py` / `serve-ts` | `http://localhost:8080/index.php?isbn=9789600316483` (use `PORT=` to change the port) |
+| `make serve-php` / `serve-py` / `serve-ts` | PHP: `http://localhost:8080/index.php?isbn=9789600316483`. Python and TypeScript: `http://localhost:8080/?isbn=9789600316483`. Use `PORT=` to change the port. |
 | `cd python && uv run bookmeta <isbn>` | Python CLI |
 | `make build-ts && node ts/dist/cli.js <isbn>` | TypeScript CLI |
 | `make pack-check-ts` | Packs the npm package from a clean `dist/` and installs, imports and runs it. Run it after changing `ts/package.json` or the build. |
@@ -37,7 +37,7 @@ Run everything from the repo root with `make`. PHP is **not** installed on the h
   | ISBN | `Isbn` | `isbn.py` | `isbn.ts` | Always normalizes to ISBN-13, because biblionet search only matches 13-digit ISBNs. |
   | Parser | `BiblionetParser` | `parser.py` | `parser.ts` | HTML string in, data out. No network. All site-specific selectors and labels live here. |
   | Client | `BiblionetClient` | `client.py` | `client.ts` | Searches, opens each candidate, and accepts only a page whose ISBN matches. |
-  | Endpoint | `Endpoint` | `endpoint.py` | `endpoint.ts` | Framework-free: query in, `{status, content_type, body}` out. `php/index.php`, `python/.../app.py` (FastAPI) and `ts/src/app.ts` (Hono) are thin wrappers. The Python and TypeScript apps parse `name[]=` query parameters like PHP `$_GET`. |
+  | Endpoint | `Endpoint` | `endpoint.py` | `endpoint.ts` | Framework-free: query in, `{status, content_type, body}` out. `php/index.php`, `python/.../app.py` (FastAPI) and `ts/src/app.ts` (Hono) are thin wrappers. Python and TypeScript serve `/`, with `/index.php` as an alias so PHP clients can switch without changing the path. Keep the alias out of the docs' main URLs. The Python and TypeScript apps parse `name[]=` query parameters like PHP `$_GET`. |
 
 ## Output contract
 

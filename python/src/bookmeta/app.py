@@ -1,4 +1,5 @@
-"""FastAPI app serving the endpoint at / and /index.php (the PHP URL).
+"""FastAPI app serving the endpoint at /, plus /index.php as an alias so PHP
+clients can switch without changing the path.
 
 Run: uvicorn bookmeta.app:app
 """

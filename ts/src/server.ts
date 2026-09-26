@@ -6,5 +6,5 @@ import { createApp } from "./app.js";
 
 const port = Number(process.env.PORT ?? 8080);
 serve({ fetch: createApp().fetch, port }, (info) => {
-  console.log(`bookmeta listening on http://localhost:${String(info.port)}/index.php?isbn=9789600316483`);
+  console.log(`bookmeta listening on http://localhost:${String(info.port)}/?isbn=9789600316483`);
 });

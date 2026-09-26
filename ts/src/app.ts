@@ -1,4 +1,4 @@
-/** Hono app serving the endpoint at / and /index.php (the PHP URL). */
+/** Hono app serving the endpoint at /, plus /index.php as an alias so PHP clients can switch without changing the path. */
 
 import { Hono } from "hono";
 
