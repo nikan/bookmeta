@@ -35,14 +35,17 @@ Errors return `{"error": "..."}` with HTTP 400 (invalid ISBN or format), 404 (no
 
 **Python:** Python 3.12+. From `python/`, run `uv sync`. Then either `uv run uvicorn bookmeta.app:app` for the same endpoint at `/index.php`, or `uv run bookmeta <isbn>` for the command-line version.
 
-Both return identical output. They are checked against the shared spec in `contract/`.
+**TypeScript:** Node 22+. From `ts/`, run `npm ci && npm run build`. Then either `node dist/server.js` (set `PORT`, default 8080) for the endpoint, or `node dist/cli.js <isbn>` for the command-line version.
+
+All three return identical output. They are checked against the shared spec in `contract/`.
 
 ## Develop
-You need Docker (for PHP), [uv](https://docs.astral.sh/uv/) (for Python) and `make`. See `AGENTS.md` for details.
+You need Docker (for PHP), [uv](https://docs.astral.sh/uv/) (for Python), Node 22+ (for TypeScript) and `make`. See `AGENTS.md` for details.
 ```
 make test        # offline tests, all languages
 make serve-php   # http://localhost:8080/index.php?isbn=9789600316483&format=html
 make serve-py    # same endpoint, Python
+make serve-ts    # same endpoint, TypeScript
 ```
 
 ## License

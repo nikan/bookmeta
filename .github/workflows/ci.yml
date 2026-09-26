@@ -20,3 +20,17 @@ jobs:
       - run: make install-py
       - run: make lint-py
       - run: make test-py
+
+  typescript:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: ts/package-lock.json
+      - run: make install-ts
+      - run: make lint-ts
+      - run: make test-ts
+      - run: make pack-check-ts
