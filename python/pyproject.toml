@@ -1,0 +1,55 @@
+[project]
+name = "bookmeta"
+version = "0.2.0"
+description = "Book metadata extractor for biblionet.gr, queried by ISBN."
+readme = "README.md"
+license = "GPL-2.0-or-later"
+authors = [{ name = "Nikos Anagnostou" }]
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.115",
+    "httpx>=0.28",
+    "lxml>=5.3",
+    "uvicorn>=0.32",
+]
+
+[project.scripts]
+bookmeta = "bookmeta.__main__:main"
+
+[dependency-groups]
+dev = [
+    "jsonschema>=4.23",
+    "lxml-stubs>=0.5",
+    "mypy>=1.13",
+    "pytest>=8.3",
+    "ruff>=0.8",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = ["live: hits the real biblionet.gr (run with: make live-test-py)"]
+addopts = "--strict-markers"
+filterwarnings = [
+    "error",
+    # Starlette's TestClient nags about its own httpx backend; not our code.
+    "ignore:Using `httpx` with `starlette.testclient` is deprecated",
+]
+
+[tool.ruff]
+line-length = 110
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B", "SIM", "RUF"]
+
+[tool.mypy]
+strict = true
+files = ["src", "tests"]
+
+[[tool.mypy.overrides]]
+module = ["jsonschema"]
+ignore_missing_imports = true

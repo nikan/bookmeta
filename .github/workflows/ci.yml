@@ -5,9 +5,18 @@ on:
   pull_request:
 
 jobs:
-  test:
+  php:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: make lint
-      - run: make test
+      - run: make lint-php
+      - run: make test-php
+
+  python:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - run: make install-py
+      - run: make lint-py
+      - run: make test-py

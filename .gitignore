@@ -1,3 +1,8 @@
-/vendor/
-/.phpunit.cache/
+/php/vendor/
+/php/.phpunit.cache/
 .claude/settings.local.json
+.venv/
+__pycache__/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/

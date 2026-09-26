@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
  */
 final class BiblionetParserTest extends TestCase
 {
-    private const FIXTURES = __DIR__ . '/fixtures';
+    private const FIXTURES = __DIR__ . '/../../contract/fixtures';
 
     /** @return array<string, array{string}> */
     public static function bookFixtures(): array
