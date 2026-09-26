@@ -18,6 +18,7 @@ Run everything from the repo root with `make`. PHP is **not** installed on the h
 | `make serve-php` / `serve-py` / `serve-ts` | `http://localhost:8080/index.php?isbn=9789600316483` (use `PORT=` to change the port) |
 | `cd python && uv run bookmeta <isbn>` | Python CLI |
 | `make build-ts && node ts/dist/cli.js <isbn>` | TypeScript CLI |
+| `make pack-check-ts` | Packs the npm package from a clean `dist/` and installs, imports and runs it. Run it after changing `ts/package.json` or the build. |
 
 ## Layout
 

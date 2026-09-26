@@ -11,7 +11,10 @@
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
-    ".": "./dist/index.js"
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
   },
   "bin": {
     "bookmeta": "./dist/cli.js"
@@ -20,7 +23,9 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsc -p tsconfig.build.json",
+    "build": "node -e \"require('node:fs').rmSync('dist', { recursive: true, force: true })\" && tsc -p tsconfig.build.json",
+    "prepack": "npm run build",
+    "pack:check": "node scripts/pack-check.mjs",
     "typecheck": "tsc --noEmit",
     "lint": "eslint . && prettier --check . && tsc --noEmit",
     "format": "prettier --write .",

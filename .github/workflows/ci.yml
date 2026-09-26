@@ -33,4 +33,4 @@ jobs:
       - run: make install-ts
       - run: make lint-ts
       - run: make test-ts
-      - run: make build-ts
+      - run: make pack-check-ts

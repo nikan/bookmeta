@@ -10,7 +10,7 @@ UV = cd python && uv run
 .PHONY: help test lint live-test \
 	install-php test-php lint-php live-test-php fixtures serve-php \
 	install-py test-py lint-py live-test-py serve-py \
-	install-ts test-ts lint-ts live-test-ts serve-ts build-ts
+	install-ts test-ts lint-ts live-test-ts serve-ts build-ts pack-check-ts
 
 help:
 	@echo "make test          offline tests, all languages (test-php, test-py, test-ts)"
@@ -80,6 +80,9 @@ live-test-ts: install-ts
 
 build-ts: install-ts
 	cd ts && npm run build
+
+pack-check-ts: install-ts
+	cd ts && npm run pack:check
 
 serve-ts: install-ts
 	cd ts && PORT=$(PORT) npm run serve
