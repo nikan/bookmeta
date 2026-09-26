@@ -7,6 +7,10 @@
       "Bash(make lint)",
       "Bash(make lint-php)",
       "Bash(make lint-py)",
+      "Bash(make test-ts)",
+      "Bash(make lint-ts)",
+      "Bash(make install-ts)",
+      "Bash(make build-ts)",
       "Bash(make install-php)",
       "Bash(make install-py)",
       "Bash(make help)",
@@ -18,6 +22,7 @@
       "Bash(make live-test)",
       "Bash(make live-test-php)",
       "Bash(make live-test-py)",
+      "Bash(make live-test-ts)",
       "Bash(make fixtures)"
     ]
   }

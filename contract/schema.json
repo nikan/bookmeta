@@ -24,10 +24,12 @@
       }
     },
     "book": {
+      "type": "object",
       "$ref": "#/$defs/fields",
       "unevaluatedProperties": false
     },
     "response": {
+      "type": "object",
       "$ref": "#/$defs/fields",
       "required": ["url"],
       "properties": {

@@ -1,0 +1,50 @@
+{
+  "name": "bookmeta",
+  "version": "0.2.0",
+  "description": "Book metadata extractor for biblionet.gr, queried by ISBN.",
+  "license": "GPL-2.0-or-later",
+  "author": "Nikos Anagnostou",
+  "type": "module",
+  "engines": {
+    "node": ">=22.13"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./dist/index.js"
+  },
+  "bin": {
+    "bookmeta": "./dist/cli.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint . && prettier --check . && tsc --noEmit",
+    "format": "prettier --write .",
+    "test": "vitest run",
+    "test:live": "LIVE=1 vitest run test/live.test.ts",
+    "serve": "tsx src/server.ts",
+    "cli": "tsx src/cli.ts"
+  },
+  "dependencies": {
+    "@hono/node-server": "^2.1.1",
+    "cheerio": "^1.2.0",
+    "domhandler": "^5.0.3",
+    "hono": "^4.13.9"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^22.20.4",
+    "ajv": "^8.20.0",
+    "ajv-formats": "^3.0.1",
+    "eslint": "^10.11.0",
+    "prettier": "^3.9.9",
+    "tsx": "^4.23.15",
+    "typescript": "~6.0.3",
+    "typescript-eslint": "^8.70.1",
+    "vitest": "^5.0.2"
+  }
+}

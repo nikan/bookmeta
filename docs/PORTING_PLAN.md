@@ -31,7 +31,7 @@ Each port keeps the same three layers and the same public functions.
 ## Stack
 | Concern | Python | TypeScript |
 |---|---|---|
-| Tooling | uv, Python 3.12+, ruff, mypy --strict | Node 22+, pnpm, tsc strict, eslint |
+| Tooling | uv, Python 3.12+, ruff, mypy --strict | Node 22+, npm (pnpm isn't installed and adds nothing at this size), TypeScript 6.0 strict, eslint + prettier |
 | HTTP | httpx (async, timeouts, follow redirects) | built-in `fetch` + `AbortSignal.timeout` |
 | HTML | lxml, whose XPath lets the PHP queries carry over almost 1:1 | cheerio, with the XPath rewritten as CSS plus `.nextAll().first()` |
 | Accent stripping | `unicodedata.normalize("NFD")`, then drop combining marks | `s.normalize("NFD").replace(/\p{M}/gu, "")` |
@@ -40,13 +40,13 @@ Each port keeps the same three layers and the same public functions.
 | Container | `python:3.12-slim` | `node:22-slim` |
 
 ## To do it
-Status (2026-09-26): steps 1-3 are done. PHP and Python pass the same contract and return byte-identical responses on live requests. Next is step 4.
+Status (2026-09-26): steps 1-5 are done. PHP, Python and TypeScript pass the same contract and return byte-identical responses on live requests. Step 6 is partly done: CI runs all three, but the weekly live test isn't set up. Steps 7 and 8 are open.
 
 1. **[Done] Freeze the contract.** Move `tests/fixtures` to `contract/fixtures` and move the PHP code into `php/`. Add `schema.json` and `http_cases.json`. These cover: valid ISBN-13, ISBN-10 converted to 13, invalid ISBN (400), bad format (400), not found (404), escaped HTML output. Point the PHP tests at `contract/`. Run `make test`; it must still pass.
 2. **[Done] Python: ISBN and parser.** Port `Isbn` and `BiblionetParser`. Done when pytest passes every `book_*.expected.json` (deep-equal after JSON parse) and the search fixtures.
 3. **[Done] Python: client and server.** Port the client and add the FastAPI app and a `python -m bookmeta <isbn>` CLI. Run `http_cases.json` against the app with a stubbed client. Add an opt-in live test marked `@pytest.mark.live`.
-4. **TypeScript: ISBN and parser.** Same gate as step 2, using vitest.
-5. **TypeScript: client and server.** Same as step 3: Hono app, `npx bookmeta <isbn>` CLI, and a live test behind `LIVE=1`.
+4. **[Done] TypeScript: ISBN and parser.** Same gate as step 2, using vitest.
+5. **[Done] TypeScript: client and server.** Same as step 3: Hono app, `npx bookmeta <isbn>` CLI, and a live test behind `LIVE=1`.
 6. **CI.** Build a matrix job per language that runs lint, test, and the shared contract. Add a weekly scheduled `live-test` for all three so site changes surface early.
 7. **Refresh fixtures from one place.** Only the reference implementation (PHP now, Python once PHP is retired) downloads the HTML and rewrites `*.expected.json`. A person reviews the diff, and the other ports must then match it. They never regenerate expected output themselves.
 8. **Retire PHP (optional).** Once one port runs in production, drop `php/` or mark it unmaintained in the README.

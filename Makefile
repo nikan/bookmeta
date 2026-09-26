@@ -1,4 +1,4 @@
-# PHP runs in Docker (no host PHP needed). Python runs on the host through uv.
+# PHP runs in Docker (no host PHP needed). Python runs on the host through uv, TypeScript through npm.
 PHP_IMAGE ?= php:8.3-cli
 COMPOSER_IMAGE ?= composer:2
 PORT ?= 8080
@@ -9,19 +9,21 @@ UV = cd python && uv run
 
 .PHONY: help test lint live-test \
 	install-php test-php lint-php live-test-php fixtures serve-php \
-	install-py test-py lint-py live-test-py serve-py
+	install-py test-py lint-py live-test-py serve-py \
+	install-ts test-ts lint-ts live-test-ts serve-ts build-ts
 
 help:
-	@echo "make test          offline tests, all languages (test-php, test-py)"
-	@echo "make lint          lint, all languages (lint-php, lint-py)"
+	@echo "make test          offline tests, all languages (test-php, test-py, test-ts)"
+	@echo "make lint          lint, all languages (lint-php, lint-py, lint-ts)"
 	@echo "make live-test     tests against the real biblionet.gr (network)"
 	@echo "make fixtures      re-download contract/fixtures and rewrite expected JSON with PHP (network)"
 	@echo "make serve-php     PHP endpoint at http://localhost:$(PORT)/index.php?isbn=9789600316483"
 	@echo "make serve-py      Python endpoint at http://localhost:$(PORT)/index.php?isbn=9789600316483"
+	@echo "make serve-ts      TypeScript endpoint at http://localhost:$(PORT)/index.php?isbn=9789600316483"
 
-test: test-php test-py
-lint: lint-php lint-py
-live-test: live-test-php live-test-py
+test: test-php test-py test-ts
+lint: lint-php lint-py lint-ts
+live-test: live-test-php live-test-py live-test-ts
 
 # --- PHP ---
 php/vendor/autoload.php: php/composer.json
@@ -60,3 +62,24 @@ live-test-py:
 
 serve-py:
 	$(UV) uvicorn bookmeta.app:app --port $(PORT)
+
+# --- TypeScript ---
+ts/node_modules/.package-lock.json: ts/package.json ts/package-lock.json
+	cd ts && npm ci
+
+install-ts: ts/node_modules/.package-lock.json
+
+test-ts: install-ts
+	cd ts && npm test
+
+lint-ts: install-ts
+	cd ts && npm run lint
+
+live-test-ts: install-ts
+	cd ts && npm run test:live
+
+build-ts: install-ts
+	cd ts && npm run build
+
+serve-ts: install-ts
+	cd ts && PORT=$(PORT) npm run serve
