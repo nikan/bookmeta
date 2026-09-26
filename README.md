@@ -33,7 +33,7 @@ Errors return `{"error": "..."}` with HTTP 400 (invalid ISBN or format), 404 (no
 ## Install
 **PHP:** PHP 8.2+ with the `curl`, `dom` and `mbstring` extensions. Copy `php/index.php` and `php/src/` to a PHP-enabled web server. There are no runtime dependencies.
 
-**Python:** Python 3.12+. From `python/`, run `uv sync`. Then either `uv run uvicorn bookmeta.app:app` for the same endpoint at `/index.php`, or `uv run bookmeta <isbn>` for the command-line version.
+**Python:** Python 3.12+. From `python/`, run `uv sync`. Then either `uv run uvicorn bookmeta.app:app --port 8080` for the same endpoint at `/index.php` (uvicorn's default port is 8000), or `uv run bookmeta <isbn>` for the command-line version.
 
 **TypeScript:** Node 22+. From `ts/`, run `npm ci && npm run build`. Then either `node dist/server.js` (set `PORT`, default 8080) for the endpoint, or `node dist/cli.js <isbn>` for the command-line version.
 
@@ -43,9 +43,21 @@ All three return identical output. They are checked against the shared spec in `
 You need Docker (for PHP), [uv](https://docs.astral.sh/uv/) (for Python), Node 22+ (for TypeScript) and `make`. See `AGENTS.md` for details.
 ```
 make test        # offline tests, all languages
-make serve-php   # http://localhost:8080/index.php?isbn=9789600316483&format=html
-make serve-py    # same endpoint, Python
-make serve-ts    # same endpoint, TypeScript
+```
+
+Each `make serve-*` command starts one implementation on port 8080 by default:
+
+| Command | Language | Endpoint |
+|---|---|---|
+| `make serve-php` | PHP | `http://localhost:8080/index.php?isbn=9789600316483` |
+| `make serve-py` | Python | `http://localhost:8080/index.php?isbn=9789600316483` (also `/?isbn=...`) |
+| `make serve-ts` | TypeScript | `http://localhost:8080/index.php?isbn=9789600316483` (also `/?isbn=...`) |
+
+Add `&format=html` for HTML output. Because all three use the same port, run one at a time, or give each its own port to run them side by side:
+```
+PORT=8091 make serve-php   # http://localhost:8091/index.php?isbn=...
+PORT=8092 make serve-py    # http://localhost:8092/index.php?isbn=...
+PORT=8093 make serve-ts    # http://localhost:8093/index.php?isbn=...
 ```
 
 ## License
