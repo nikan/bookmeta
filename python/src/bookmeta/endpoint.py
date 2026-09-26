@@ -28,9 +28,11 @@ class Response:
 
 
 async def handle(query: Mapping[str, object], lookup: Lookup) -> Response:
-    raw_format = query.get("format")
-    fmt = raw_format if isinstance(raw_format, str) and raw_format != "" else "json"
-    if fmt not in ("json", "html"):
+    # Absent or empty means json; a present non-string (?format[]=...) is a bad format.
+    fmt = query.get("format")
+    if fmt is None or fmt == "":
+        fmt = "json"
+    if not isinstance(fmt, str) or fmt not in ("json", "html"):
         return _render(400, "json", {"error": "format must be json or html"})
 
     raw_isbn = query.get("isbn")

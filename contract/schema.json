@@ -2,23 +2,38 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/nikan/bookmeta/contract/schema.json",
   "title": "Book metadata (v1)",
-  "description": "Successful response body. The parser output is the same object without 'url'. Multi-valued fields are joined with \", \".",
-  "type": "object",
-  "additionalProperties": false,
-  "required": ["isbn", "biblionetid", "cover_url", "title", "subtitle", "authors", "translators", "publisher", "yr_published", "original_language", "original_title", "categories"],
-  "properties": {
-    "isbn": {"type": ["string", "null"], "pattern": "^[0-9]{13}$"},
-    "biblionetid": {"type": ["string", "null"], "pattern": "^[0-9]+$"},
-    "cover_url": {"type": ["string", "null"], "format": "uri"},
-    "title": {"type": ["string", "null"]},
-    "subtitle": {"type": ["string", "null"]},
-    "authors": {"type": ["string", "null"]},
-    "translators": {"type": ["string", "null"]},
-    "publisher": {"type": ["string", "null"]},
-    "yr_published": {"type": ["string", "null"], "pattern": "^[0-9]{4}$"},
-    "original_language": {"type": ["string", "null"]},
-    "original_title": {"type": ["string", "null"]},
-    "categories": {"type": ["string", "null"]},
-    "url": {"type": "string", "format": "uri"}
+  "description": "The root schema is the successful HTTP response body. $defs/book is the parser output: the same fields without 'url'. Multi-valued fields are joined with \", \".",
+  "$ref": "#/$defs/response",
+  "$defs": {
+    "fields": {
+      "type": "object",
+      "required": ["isbn", "biblionetid", "cover_url", "title", "subtitle", "authors", "translators", "publisher", "yr_published", "original_language", "original_title", "categories"],
+      "properties": {
+        "isbn": {"type": ["string", "null"], "pattern": "^[0-9]{13}$"},
+        "biblionetid": {"type": ["string", "null"], "pattern": "^[0-9]+$"},
+        "cover_url": {"type": ["string", "null"], "format": "uri"},
+        "title": {"type": ["string", "null"]},
+        "subtitle": {"type": ["string", "null"]},
+        "authors": {"type": ["string", "null"]},
+        "translators": {"type": ["string", "null"]},
+        "publisher": {"type": ["string", "null"]},
+        "yr_published": {"type": ["string", "null"], "pattern": "^[0-9]{4}$"},
+        "original_language": {"type": ["string", "null"]},
+        "original_title": {"type": ["string", "null"]},
+        "categories": {"type": ["string", "null"]}
+      }
+    },
+    "book": {
+      "$ref": "#/$defs/fields",
+      "unevaluatedProperties": false
+    },
+    "response": {
+      "$ref": "#/$defs/fields",
+      "required": ["url"],
+      "properties": {
+        "url": {"type": "string", "format": "uri"}
+      },
+      "unevaluatedProperties": false
+    }
   }
 }

@@ -1,5 +1,5 @@
 {
-  "description": "Endpoint behaviour every implementation must match. Run each case against the endpoint with a stubbed lookup. 'lookup.returns' names a fixture: the stub returns fixtures/<name>.expected.json plus {\"url\": stub_url}. 'lookup.returns: null' means not found, 'lookup.raises: upstream' means biblionet failed, and no 'lookup' means the lookup must not be called. 'json_fixture' expects that same fixture-plus-url object as the JSON body. content_type is a prefix match.",
+  "description": "Endpoint behaviour every implementation must match. Run each case against the endpoint with a stubbed lookup. 'lookup.returns' names a fixture: the stub returns fixtures/<name>.expected.json plus {\"url\": stub_url}. 'lookup.returns: null' means not found, 'lookup.raises: upstream' means biblionet failed, and no 'lookup' means the lookup must not be called. 'json_fixture' expects that same fixture-plus-url object as the JSON body. content_type is a prefix match. A list value in 'query' stands for a PHP-style array parameter such as ?format[]=html: the parameter is present but is not a string. An absent or empty 'format' means json; a non-string 'format' is a bad format.",
   "stub_url": "https://www.biblionet.gr/test-book",
   "cases": [
     {
@@ -77,6 +77,20 @@
       "status": 400,
       "content_type": "application/json",
       "json": {"error": "format must be json or html"}
+    },
+    {
+      "name": "non-string format is a bad format, not a missing one",
+      "query": {"isbn": "9789600316483", "format": ["html"]},
+      "status": 400,
+      "content_type": "application/json",
+      "json": {"error": "format must be json or html"}
+    },
+    {
+      "name": "non-string isbn is not a valid isbn",
+      "query": {"isbn": ["9789600316483"]},
+      "status": 400,
+      "content_type": "application/json",
+      "json": {"error": "No valid ISBN provided."}
     },
     {
       "name": "not found",

@@ -17,8 +17,12 @@ final class Endpoint
      */
     public static function handle(array $query, callable $findByIsbn): array
     {
-        $format = is_string($query['format'] ?? null) && $query['format'] !== '' ? $query['format'] : 'json';
-        if (!in_array($format, ['json', 'html'], true)) {
+        // Absent or empty means json; a present non-string (?format[]=...) is a bad format.
+        $format = $query['format'] ?? '';
+        if ($format === '') {
+            $format = 'json';
+        }
+        if (!is_string($format) || !in_array($format, ['json', 'html'], true)) {
             return self::render(400, 'json', ['error' => 'format must be json or html']);
         }
 

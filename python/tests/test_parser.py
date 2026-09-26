@@ -1,10 +1,7 @@
 """Parser against saved biblionet pages. The expected JSON is the shared contract."""
 
-import json
-
 import pytest
-from conftest import CONTRACT, book_fixture_names, fixture_expected, fixture_html
-from jsonschema import Draft202012Validator
+from conftest import book_fixture_names, fixture_expected, fixture_html, schema_validator
 
 from bookmeta.parser import normalize_label, parse_book, parse_search_results
 
@@ -15,9 +12,18 @@ def test_parses_book_page(name: str) -> None:
 
 
 @pytest.mark.parametrize("name", book_fixture_names())
-def test_expected_output_matches_schema(name: str) -> None:
-    schema = json.loads((CONTRACT / "schema.json").read_text(encoding="utf-8"))
-    Draft202012Validator(schema).validate(fixture_expected(name))
+def test_expected_output_matches_book_schema(name: str) -> None:
+    schema_validator("book").validate(fixture_expected(name))
+
+
+def test_schema_separates_parser_output_from_response() -> None:
+    book = fixture_expected("book_88309")
+    with_url = {**book, "url": "https://www.biblionet.gr/x"}
+    assert schema_validator("book").is_valid(book)
+    assert not schema_validator("book").is_valid(with_url)
+    assert schema_validator().is_valid(with_url)
+    assert not schema_validator().is_valid(book)  # response without url
+    assert not schema_validator().is_valid({**with_url, "extra": None})
 
 
 def test_key_order_matches_contract() -> None:

@@ -5,10 +5,10 @@ import json
 from typing import Any
 
 import pytest
-from conftest import CONTRACT, fixture_expected
+from conftest import CONTRACT, fixture_expected, schema_validator
 from fastapi.testclient import TestClient
 
-from bookmeta.app import create_app
+from bookmeta.app import create_app, php_style_query
 from bookmeta.client import UpstreamError
 from bookmeta.endpoint import Lookup, handle
 from bookmeta.parser import Book
@@ -43,7 +43,9 @@ def test_case(case: dict[str, Any]) -> None:
     if "expect_lookup_isbn" in case:
         assert calls == [case["expect_lookup_isbn"]]
     if "json_fixture" in case:
-        assert json.loads(response.body) == book(case["json_fixture"])
+        body = json.loads(response.body)
+        assert body == book(case["json_fixture"])
+        schema_validator().validate(body)
     if "json" in case:
         assert json.loads(response.body) == case["json"]
     for needle in case.get("html_contains", []):
@@ -61,7 +63,24 @@ def test_app_serves_endpoint_at_php_path() -> None:
             assert response.json() == book("book_88309")
 
 
-def test_app_rejects_array_isbn_param() -> None:
+@pytest.mark.parametrize(
+    ("query_string", "error"),
+    [
+        ("isbn[]=9789600316483", "No valid ISBN provided."),
+        ("isbn=9789600316483&format[]=html", "format must be json or html"),
+        ("isbn=9789600316483&format[x]=html", "format must be json or html"),
+    ],
+)
+def test_app_treats_array_params_like_php(query_string: str, error: str) -> None:
     with TestClient(create_app(stub({}, []))) as client:
-        response = client.get("/index.php?isbn[]=9789600316483")
+        response = client.get(f"/index.php?{query_string}")
         assert response.status_code == 400
+        assert response.json() == {"error": error}
+
+
+def test_php_style_query() -> None:
+    assert php_style_query([("isbn", "1"), ("format", "html")]) == {"isbn": "1", "format": "html"}
+    assert php_style_query([("format[]", "a"), ("format[]", "b")]) == {"format": ["a", "b"]}
+    assert php_style_query([("format", "json"), ("format", "xml")]) == {"format": "xml"}
+    assert php_style_query([("format[]", "a"), ("format", "html")]) == {"format": "html"}
+    assert php_style_query([("format", "html"), ("format[]", "a")]) == {"format": ["a"]}
