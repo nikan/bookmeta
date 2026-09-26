@@ -31,14 +31,18 @@ Missing fields are `null`. Multiple authors, translators or categories are joine
 Errors return `{"error": "..."}` with HTTP 400 (invalid ISBN or format), 404 (not on biblionet) or 502 (biblionet unreachable).
 
 ## Install
-Requires PHP 8.2+ with the `curl`, `dom` and `mbstring` extensions.
-Copy `index.php` and `src/` to a PHP-enabled web server. There are no runtime dependencies.
+**PHP:** PHP 8.2+ with the `curl`, `dom` and `mbstring` extensions. Copy `php/index.php` and `php/src/` to a PHP-enabled web server. There are no runtime dependencies.
+
+**Python:** Python 3.12+. From `python/`, run `uv sync`. Then either `uv run uvicorn bookmeta.app:app` for the same endpoint at `/index.php`, or `uv run bookmeta <isbn>` for the command-line version.
+
+Both return identical output. They are checked against the shared spec in `contract/`.
 
 ## Develop
-Only Docker and `make` are needed. See `AGENTS.md` for details.
+You need Docker (for PHP), [uv](https://docs.astral.sh/uv/) (for Python) and `make`. See `AGENTS.md` for details.
 ```
-make test    # offline tests against saved pages
-make serve   # http://localhost:8080/index.php?isbn=9789600316483&format=html
+make test        # offline tests, all languages
+make serve-php   # http://localhost:8080/index.php?isbn=9789600316483&format=html
+make serve-py    # same endpoint, Python
 ```
 
 ## License

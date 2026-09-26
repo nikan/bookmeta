@@ -40,9 +40,11 @@ Each port keeps the same three layers and the same public functions.
 | Container | `python:3.12-slim` | `node:22-slim` |
 
 ## To do it
-1. **Freeze the contract.** Move `tests/fixtures` to `contract/fixtures` and move the PHP code into `php/`. Add `schema.json` and `http_cases.json`. These cover: valid ISBN-13, ISBN-10 converted to 13, invalid ISBN (400), bad format (400), not found (404), escaped HTML output. Point the PHP tests at `contract/`. Run `make test`; it must still pass.
-2. **Python: ISBN and parser.** Port `Isbn` and `BiblionetParser`. Done when pytest passes every `book_*.expected.json` (deep-equal after JSON parse) and the search fixtures.
-3. **Python: client and server.** Port the client and add the FastAPI app and a `python -m bookmeta <isbn>` CLI. Run `http_cases.json` against the app with a stubbed client. Add an opt-in live test marked `@pytest.mark.live`.
+Status (2026-09-26): steps 1-3 are done. PHP and Python pass the same contract and return byte-identical responses on live requests. Next is step 4.
+
+1. **[Done] Freeze the contract.** Move `tests/fixtures` to `contract/fixtures` and move the PHP code into `php/`. Add `schema.json` and `http_cases.json`. These cover: valid ISBN-13, ISBN-10 converted to 13, invalid ISBN (400), bad format (400), not found (404), escaped HTML output. Point the PHP tests at `contract/`. Run `make test`; it must still pass.
+2. **[Done] Python: ISBN and parser.** Port `Isbn` and `BiblionetParser`. Done when pytest passes every `book_*.expected.json` (deep-equal after JSON parse) and the search fixtures.
+3. **[Done] Python: client and server.** Port the client and add the FastAPI app and a `python -m bookmeta <isbn>` CLI. Run `http_cases.json` against the app with a stubbed client. Add an opt-in live test marked `@pytest.mark.live`.
 4. **TypeScript: ISBN and parser.** Same gate as step 2, using vitest.
 5. **TypeScript: client and server.** Same as step 3: Hono app, `npx bookmeta <isbn>` CLI, and a live test behind `LIVE=1`.
 6. **CI.** Build a matrix job per language that runs lint, test, and the shared contract. Add a weekly scheduled `live-test` for all three so site changes surface early.

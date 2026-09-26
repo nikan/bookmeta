@@ -1,6 +1,6 @@
 <?php
 /**
- * Re-downloads the biblionet pages under tests/fixtures and rewrites the
+ * Re-downloads the biblionet pages under contract/fixtures and rewrites the
  * expected JSON from the current parser. Run with `make fixtures`, then
  * review the diff: changed expected JSON means the site or the parser changed.
  */
@@ -16,7 +16,7 @@ require __DIR__ . '/../vendor/autoload.php';
 use BookMeta\BiblionetClient;
 use BookMeta\BiblionetParser;
 
-$dir = __DIR__ . '/../tests/fixtures';
+$dir = __DIR__ . '/../../contract/fixtures';
 $client = new BiblionetClient();
 $json = JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT;
 $search = static fn (string $q): string => BiblionetClient::url('/συνθετη-αναζητηση') . '?' . http_build_query(['q' => $q]);

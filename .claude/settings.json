@@ -2,8 +2,13 @@
   "permissions": {
     "allow": [
       "Bash(make test)",
+      "Bash(make test-php)",
+      "Bash(make test-py)",
       "Bash(make lint)",
-      "Bash(make install)",
+      "Bash(make lint-php)",
+      "Bash(make lint-py)",
+      "Bash(make install-php)",
+      "Bash(make install-py)",
       "Bash(make help)",
       "Bash(git status:*)",
       "Bash(git diff:*)",
@@ -11,6 +16,8 @@
     ],
     "ask": [
       "Bash(make live-test)",
+      "Bash(make live-test-php)",
+      "Bash(make live-test-py)",
       "Bash(make fixtures)"
     ]
   }

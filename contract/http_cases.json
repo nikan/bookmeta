@@ -1,0 +1,112 @@
+{
+  "description": "Endpoint behaviour every implementation must match. Run each case against the endpoint with a stubbed lookup. 'lookup.returns' names a fixture: the stub returns fixtures/<name>.expected.json plus {\"url\": stub_url}. 'lookup.returns: null' means not found, 'lookup.raises: upstream' means biblionet failed, and no 'lookup' means the lookup must not be called. 'json_fixture' expects that same fixture-plus-url object as the JSON body. content_type is a prefix match. A list value in 'query' stands for a PHP-style array parameter such as ?format[]=html: the parameter is present but is not a string. An absent or empty 'format' means json; a non-string 'format' is a bad format.",
+  "stub_url": "https://www.biblionet.gr/test-book",
+  "cases": [
+    {
+      "name": "isbn-13 returns json by default",
+      "query": {"isbn": "9789600316483"},
+      "lookup": {"returns": "book_88309"},
+      "expect_lookup_isbn": "9789600316483",
+      "status": 200,
+      "content_type": "application/json",
+      "json_fixture": "book_88309"
+    },
+    {
+      "name": "isbn-10 with hyphens is searched as isbn-13",
+      "query": {"isbn": "960-03-1648-1"},
+      "lookup": {"returns": "book_88309"},
+      "expect_lookup_isbn": "9789600316483",
+      "status": 200,
+      "content_type": "application/json",
+      "json_fixture": "book_88309"
+    },
+    {
+      "name": "empty format falls back to json",
+      "query": {"isbn": "9789600316483", "format": ""},
+      "lookup": {"returns": "book_88309"},
+      "status": 200,
+      "content_type": "application/json",
+      "json_fixture": "book_88309"
+    },
+    {
+      "name": "html format escapes values",
+      "query": {"isbn": "9789600316483", "format": "html"},
+      "lookup": {"returns": "book_88309"},
+      "status": 200,
+      "content_type": "text/html",
+      "html_contains": [
+        "<title>Metadata for book with ISBN: 9789600316483</title>",
+        "<p id=\"title\">Εισαγωγή σε δύο θεωρίες της κοινωνικής ανθρωπολογίας</p>",
+        "<p id=\"original_title\">Introduction à deux théories d&apos; anthropologie sociale</p>",
+        "<p id=\"url\">https://www.biblionet.gr/test-book</p>"
+      ]
+    },
+    {
+      "name": "html format renders null as empty",
+      "query": {"isbn": "9789603215066", "format": "html"},
+      "lookup": {"returns": "book_306233"},
+      "status": 200,
+      "content_type": "text/html",
+      "html_contains": ["<p id=\"cover_url\"></p>", "<p id=\"translators\"></p>"]
+    },
+    {
+      "name": "missing isbn",
+      "query": {},
+      "status": 400,
+      "content_type": "application/json",
+      "json": {"error": "No valid ISBN provided."}
+    },
+    {
+      "name": "bad check digit",
+      "query": {"isbn": "9789600316484"},
+      "status": 400,
+      "content_type": "application/json",
+      "json": {"error": "No valid ISBN provided."}
+    },
+    {
+      "name": "markup after a valid isbn is rejected, not stripped",
+      "query": {"isbn": "9789600316483<script>", "format": "html"},
+      "status": 400,
+      "content_type": "text/html",
+      "html_contains": ["<title>Book metadata</title>", "<p id=\"error\">No valid ISBN provided.</p>"],
+      "html_not_contains": ["<script>"]
+    },
+    {
+      "name": "unknown format",
+      "query": {"isbn": "9789600316483", "format": "xml"},
+      "status": 400,
+      "content_type": "application/json",
+      "json": {"error": "format must be json or html"}
+    },
+    {
+      "name": "non-string format is a bad format, not a missing one",
+      "query": {"isbn": "9789600316483", "format": ["html"]},
+      "status": 400,
+      "content_type": "application/json",
+      "json": {"error": "format must be json or html"}
+    },
+    {
+      "name": "non-string isbn is not a valid isbn",
+      "query": {"isbn": ["9789600316483"]},
+      "status": 400,
+      "content_type": "application/json",
+      "json": {"error": "No valid ISBN provided."}
+    },
+    {
+      "name": "not found",
+      "query": {"isbn": "9780000000002"},
+      "lookup": {"returns": null},
+      "status": 404,
+      "content_type": "application/json",
+      "json": {"error": "No book found for this ISBN.", "isbn": "9780000000002"}
+    },
+    {
+      "name": "biblionet failure",
+      "query": {"isbn": "9789600316483"},
+      "lookup": {"raises": "upstream"},
+      "status": 502,
+      "content_type": "application/json",
+      "json": {"error": "Could not load data from biblionet.gr.", "isbn": "9789600316483"}
+    }
+  ]
+}
